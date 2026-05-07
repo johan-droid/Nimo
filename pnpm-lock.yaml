@@ -5765,7 +5765,7 @@ packages:
     engines: {node: '>= 10'}
 
   ioredis@5.10.1:
-    resolution: {integrity: sha512-8Y2Q2xNf6QY2GgqFzE1I1i9v3HkPQmwsZKp8Bw7wM3cP1E2BqQmOJ6O8J2Q2jMmG4sZ4Yz4CJQqVQhJhJkGZ4eRqQ==}
+    resolution: {integrity: sha512-HuEDBTI70aYdx1v6U97SbNx9F1+svQKBDo30o0b9fw055LMepzpOOd0Ccg9Q6tbqmBSJaMuY0fB7yw9/vjBYCA==}
     engines: {node: '>=12.22.12'}
 
   ircv3@0.33.1:
