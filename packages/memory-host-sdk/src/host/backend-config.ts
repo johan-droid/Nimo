@@ -9,6 +9,7 @@ import {
   type MemoryQmdMcporterConfig,
   type MemoryQmdSearchMode,
   type MemoryQmdStartupMode,
+  type MemoryRedisConfig,
   type OpenClawConfig,
   parseDurationMs,
   resolveAgentWorkspaceDir,
