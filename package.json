@@ -1498,7 +1498,7 @@
     "rtt": "node --import tsx scripts/rtt.ts",
     "runtime-sidecars:check": "node --import tsx scripts/generate-runtime-sidecar-paths-baseline.ts --check",
     "runtime-sidecars:gen": "node --import tsx scripts/generate-runtime-sidecar-paths-baseline.ts --write",
-    "start": "node scripts/run-node.mjs",
+    "start": "node scripts/run-node.mjs gateway",
     "test": "node scripts/test-projects.mjs",
     "test:all": "pnpm lint && pnpm build && pnpm test && pnpm test:e2e && pnpm test:live && pnpm test:docker:all",
     "test:auth:compat": "node scripts/run-vitest.mjs run --config test/vitest/vitest.gateway.config.ts src/gateway/server.auth.compat-baseline.test.ts src/gateway/client.test.ts src/gateway/reconnect-gating.test.ts src/gateway/protocol/connect-error-details.test.ts",
