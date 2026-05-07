@@ -149,6 +149,9 @@ importers:
       https-proxy-agent:
         specifier: ^9.0.0
         version: 9.0.0
+      ioredis:
+        specifier: ^5.10.1
+        version: 5.10.1
       ipaddr.js:
         specifier: ^2.4.0
         version: 2.4.0
@@ -5760,6 +5763,10 @@ packages:
   ipaddr.js@2.4.0:
     resolution: {integrity: sha512-9VGk3HGanVE6JoZXHiCpnGy5X0jYDnN4EA4lntFPj+1vIWlFhIylq2CrrCOJH9EAhc5CYhq18F2Av2tgoAPsYQ==}
     engines: {node: '>= 10'}
+
+  ioredis@5.10.1:
+    resolution: {integrity: sha512-8Y2Q2xNf6QY2GgqFzE1I1i9v3HkPQmwsZKp8Bw7wM3cP1E2BqQmOJ6O8J2Q2jMmG4sZ4Yz4CJQqVQhJhJkGZ4eRqQ==}
+    engines: {node: '>=12.22.12'}
 
   ircv3@0.33.1:
     resolution: {integrity: sha512-FPUj/q6zsLgIX6QDdLMjPRBObw0xK+k6eiI62dcTRwdl5aezYV0nuMhpmafyHOD6ZDqfw8DW4ayrvDfmYO65JQ==}
@@ -12750,6 +12757,8 @@ snapshots:
   ipaddr.js@1.9.1: {}
 
   ipaddr.js@2.4.0: {}
+
+  ioredis@5.10.1: {}
 
   ircv3@0.33.1:
     dependencies:
