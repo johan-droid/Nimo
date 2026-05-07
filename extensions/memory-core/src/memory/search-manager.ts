@@ -17,6 +17,7 @@ import {
   type MemorySource,
   type MemorySyncProgressUpdate,
   type ResolvedQmdConfig,
+  RedisMemoryManager,
 } from "openclaw/plugin-sdk/memory-core-host-engine-storage";
 import { normalizeAgentId } from "openclaw/plugin-sdk/routing";
 
@@ -48,6 +49,7 @@ type MemorySearchManagerCacheStore = {
   qmdManagerCache: Map<string, CachedQmdManagerEntry>;
   pendingQmdManagerCreates: Map<string, PendingQmdManagerCreate>;
   qmdManagerOpenFailures: Map<string, QmdManagerOpenFailure>;
+  redisManagerCache: Map<string, MemorySearchManager>;
 };
 
 const QMD_MANAGER_OPEN_FAILURE_COOLDOWN_MS = 60_000;
@@ -57,6 +59,7 @@ function createMemorySearchManagerCacheStore(): MemorySearchManagerCacheStore {
     qmdManagerCache: new Map<string, CachedQmdManagerEntry>(),
     pendingQmdManagerCreates: new Map<string, PendingQmdManagerCreate>(),
     qmdManagerOpenFailures: new Map<string, QmdManagerOpenFailure>(),
+    redisManagerCache: new Map<string, MemorySearchManager>(),
   };
 }
 
@@ -88,6 +91,7 @@ const {
   qmdManagerCache: QMD_MANAGER_CACHE,
   pendingQmdManagerCreates: PENDING_QMD_MANAGER_CREATES,
   qmdManagerOpenFailures: QMD_MANAGER_OPEN_FAILURES,
+  redisManagerCache: REDIS_MANAGER_CACHE,
 } = getMemorySearchManagerCacheStore();
 let managerRuntimePromise: Promise<typeof import("../../manager-runtime.js")> | null = null;
 let qmdManagerModulePromise: Promise<typeof import("./qmd-manager.js")> | null = null;
@@ -151,6 +155,42 @@ export async function getMemorySearchManager(params: {
   purpose?: MemorySearchManagerPurpose;
 }): Promise<MemorySearchManagerResult> {
   const resolved = resolveMemoryBackendConfig(params);
+  if (resolved.backend === "redis") {
+    const normalizedAgentId = normalizeAgentId(params.agentId);
+    const scopeKey = buildQmdManagerScopeKey(normalizedAgentId);
+    const cached = REDIS_MANAGER_CACHE.get(scopeKey);
+    if (cached) {
+      return { manager: params.purpose === "status" ? new BorrowedMemoryManager(cached) : cached };
+    }
+
+    try {
+      const { MemoryIndexManager, resolveMemorySearchConfig } = await loadManagerRuntime();
+      const settings = resolveMemorySearchConfig(params.cfg, params.agentId);
+      if (!settings) {
+        return { manager: null, error: "Failed to resolve memory settings for Redis backend" };
+      }
+
+      const manager = new RedisMemoryManager({
+        url: resolved.redis?.url,
+        ttlSeconds: resolved.redis?.ttlSeconds,
+        dbKey: `openclaw:memory:${normalizedAgentId}`,
+        localDbPath: settings.store.path,
+        innerManagerFactory: async () => {
+          return await MemoryIndexManager.get(params);
+        },
+      });
+
+      if (params.purpose !== "status" && params.purpose !== "cli") {
+        REDIS_MANAGER_CACHE.set(scopeKey, manager);
+      }
+      return { manager };
+    } catch (err) {
+      const message = formatErrorMessage(err);
+      log.warn(`Failed to initialize Redis memory manager: ${message}`);
+      return await getBuiltinMemorySearchManager(params);
+    }
+  }
+
   if (resolved.backend === "qmd" && resolved.qmd) {
     const qmdResolved = resolved.qmd;
     const normalizedAgentId = normalizeAgentId(params.agentId);
@@ -385,13 +425,24 @@ export async function closeAllMemorySearchManagers(): Promise<void> {
   await Promise.allSettled(pendingCreates);
   const managers = Array.from(QMD_MANAGER_CACHE.values(), (entry) => entry.manager);
   PENDING_QMD_MANAGER_CREATES.clear();
+  PENDING_QMD_MANAGER_CREATES.clear();
   QMD_MANAGER_CACHE.clear();
   QMD_MANAGER_OPEN_FAILURES.clear();
+  const redisManagers = Array.from(REDIS_MANAGER_CACHE.values());
+  REDIS_MANAGER_CACHE.clear();
+
   for (const manager of managers) {
     try {
       await manager.close?.();
     } catch (err) {
       log.warn(`failed to close qmd memory manager: ${String(err)}`);
+    }
+  }
+  for (const manager of redisManagers) {
+    try {
+      await manager.close?.();
+    } catch (err) {
+      log.warn(`failed to close redis memory manager: ${String(err)}`);
     }
   }
   if (managerRuntimePromise !== null) {

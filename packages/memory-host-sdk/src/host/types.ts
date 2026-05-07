@@ -28,7 +28,7 @@ export type MemorySyncProgressUpdate = {
 };
 
 export type MemorySearchRuntimeDebug = {
-  backend: "builtin" | "qmd";
+  backend: "builtin" | "qmd" | "redis";
   configuredMode?: string;
   effectiveMode?: string;
   fallback?: string;
@@ -44,7 +44,7 @@ export type MemoryReadResult = {
 };
 
 export type MemoryProviderStatus = {
-  backend: "builtin" | "qmd";
+  backend: "builtin" | "qmd" | "redis";
   provider: string;
   model?: string;
   requestedProvider?: string;

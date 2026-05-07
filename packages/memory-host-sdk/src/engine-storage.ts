@@ -46,3 +46,4 @@ export {
   requireNodeSqlite,
 } from "./host/sqlite.js";
 export { isFileMissingError, statRegularFile } from "./host/fs-utils.js";
+export { RedisMemoryManager } from "./host/redis-storage.js";

@@ -24,6 +24,7 @@ export type ResolvedMemoryBackendConfig = {
   backend: MemoryBackend;
   citations: MemoryCitationsMode;
   qmd?: ResolvedQmdConfig;
+  redis?: MemoryRedisConfig;
 };
 
 export type ResolvedQmdCollection = {
@@ -367,6 +368,9 @@ export function resolveMemoryBackendConfig(params: {
   const normalizedAgentId = normalizeAgentId(params.agentId);
   const backend = params.cfg.memory?.backend ?? DEFAULT_BACKEND;
   const citations = params.cfg.memory?.citations ?? DEFAULT_CITATIONS;
+  if (backend === "redis") {
+    return { backend: "redis", citations, redis: params.cfg.memory?.redis };
+  }
   if (backend !== "qmd") {
     return { backend: "builtin", citations };
   }

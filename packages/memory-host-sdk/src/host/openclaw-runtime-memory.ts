@@ -9,6 +9,7 @@ export {
   listRegisteredMemoryEmbeddingProviders,
   resolveCanonicalRootMemoryFile,
   shouldSkipRootMemoryAuxiliaryPath,
+  RedisMemoryManager,
 } from "./openclaw-runtime.js";
 export type {
   MemoryEmbeddingBatchChunk,

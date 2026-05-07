@@ -232,12 +232,14 @@
     "MONGODB_URI",
     "NODE_AUTH_TOKEN",
     "NPM_TOKEN",
-    "REDIS_URL",
     "SSH_AUTH_SOCK",
     "SYSTEMROOT",
     "WINDIR"
   ],
   "allowedInheritedOverrideOnlyKeys": [
+    "REDIS_URL",
+    "PORT",
+    "BROWSERLESS_URL",
     "ALL_PROXY",
     "AWS_CONFIG_FILE",
     "AWS_SHARED_CREDENTIALS_FILE",

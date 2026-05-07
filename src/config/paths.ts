@@ -331,6 +331,14 @@ export function resolveGatewayPort(
   if (envPort !== null) {
     return envPort;
   }
+
+  // Support Heroku's dynamic $PORT environment variable.
+  const herokuPortRaw = env.PORT?.trim();
+  const herokuPort = parseGatewayPortEnvValue(herokuPortRaw);
+  if (herokuPort !== null) {
+    return herokuPort;
+  }
+
   const configPort = cfg?.gateway?.port;
   if (typeof configPort === "number" && Number.isFinite(configPort)) {
     if (configPort > 0) {

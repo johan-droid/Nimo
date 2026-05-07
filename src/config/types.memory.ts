@@ -1,6 +1,6 @@
 import type { SessionSendPolicyConfig } from "./types.base.js";
 
-export type MemoryBackend = "builtin" | "qmd";
+export type MemoryBackend = "builtin" | "qmd" | "redis";
 export type MemoryCitationsMode = "auto" | "on" | "off";
 export type MemoryQmdSearchMode = "query" | "search" | "vsearch";
 export type MemoryQmdStartupMode = "off" | "idle" | "immediate";
@@ -9,6 +9,14 @@ export type MemoryConfig = {
   backend?: MemoryBackend;
   citations?: MemoryCitationsMode;
   qmd?: MemoryQmdConfig;
+  redis?: MemoryRedisConfig;
+};
+
+export type MemoryRedisConfig = {
+  /** Redis connection URL (e.g. redis://user:pass@host:port). Defaults to process.env.REDIS_URL. */
+  url?: string;
+  /** Optional TTL for memory entries in seconds. */
+  ttlSeconds?: number;
 };
 
 export type MemoryQmdConfig = {

@@ -1,0 +1,14 @@
+{
+  "memory": {
+    "backend": "redis",
+    "redis": {
+      "url": "${REDIS_URL}"
+    }
+  },
+  "browser": {
+    "cdpUrl": "${BROWSERLESS_URL}"
+  },
+  "tools": {
+    "enabled_tools": ["exec", "browser", "web_search", "filesystem", "github", "google_workspace"]
+  }
+}

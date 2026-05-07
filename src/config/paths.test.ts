@@ -50,6 +50,19 @@ describe("gateway port resolution", () => {
     ).toBe(19001);
   });
 
+  it("prefers PORT env value (Heroku) over config when OPENCLAW_GATEWAY_PORT is unset", () => {
+    expect(resolveGatewayPort({ gateway: { port: 19002 } }, envWith({ PORT: "12345" }))).toBe(12345);
+  });
+
+  it("prefers OPENCLAW_GATEWAY_PORT over PORT", () => {
+    expect(
+      resolveGatewayPort(
+        { gateway: { port: 19002 } },
+        envWith({ OPENCLAW_GATEWAY_PORT: "19001", PORT: "12345" }),
+      ),
+    ).toBe(19001);
+  });
+
   it("accepts Compose-style IPv4 host publish values from env", () => {
     expect(
       resolveGatewayPort(

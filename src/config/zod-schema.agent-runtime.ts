@@ -602,6 +602,7 @@ export const AgentSandboxSchema = z
 const CommonToolPolicyFields = {
   profile: ToolProfileSchema,
   allow: z.array(z.string()).optional(),
+  enabled_tools: z.array(z.string()).optional(), // Alias for allow
   alsoAllow: z.array(z.string()).optional(),
   deny: z.array(z.string()).optional(),
   byProvider: z.record(z.string(), ToolPolicyWithProfileSchema).optional(),
@@ -629,6 +630,15 @@ const AgentToolsSchema = z
   })
   .strict()
   .superRefine((value, ctx) => {
+    if (value.enabled_tools && value.allow) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Cannot set both 'allow' and 'enabled_tools'. Use 'allow' (or 'enabled_tools' as an alias).",
+      });
+    }
+    if (value.enabled_tools && !value.allow) {
+      (value as any).allow = value.enabled_tools;
+    }
     addAllowAlsoAllowConflictIssue(
       value,
       ctx,
@@ -988,6 +998,15 @@ export const ToolsSchema = z
   })
   .strict()
   .superRefine((value, ctx) => {
+    if (value.enabled_tools && value.allow) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Cannot set both 'allow' and 'enabled_tools'. Use 'allow' (or 'enabled_tools' as an alias).",
+      });
+    }
+    if (value.enabled_tools && !value.allow) {
+      (value as any).allow = value.enabled_tools;
+    }
     addAllowAlsoAllowConflictIssue(
       value,
       ctx,

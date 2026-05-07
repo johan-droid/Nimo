@@ -167,3 +167,4 @@ export type {
   WindowsSpawnResolution,
 } from "../../../../src/plugin-sdk/windows-spawn.js";
 export { resolveGlobalSingleton } from "../../../../src/shared/global-singleton.js";
+export { RedisMemoryManager } from "./redis-storage.js";
