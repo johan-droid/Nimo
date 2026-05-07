@@ -18,6 +18,7 @@ export {
   normalizeExtraMemoryPaths,
   parseEmbedding,
   readMemoryFile,
+  RedisMemoryManager,
   remapChunkLines,
   requireNodeSqlite,
   resolveMemoryBackendConfig,
